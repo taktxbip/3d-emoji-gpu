@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+}
+
+canvas {
+    display: block;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    &:last-child {
+      // opacity: 0.1;
+      // display: none;
+    }
+}
