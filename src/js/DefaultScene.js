@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as dat from 'dat.gui';
-import { loadImages } from './helpers';
 import gsap from 'gsap';
 
 import vertexShader from './shaders/vertex.glsl';
@@ -14,8 +13,11 @@ class DefaultScene {
   constructor() {
 
     this.planeSegments = 300;
+    this.time = 0;
 
     this.scene = new THREE.Scene();
+
+    console.log(this.scene);
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
     this.camera.position.set(0, 0, 4);
 
@@ -57,7 +59,7 @@ class DefaultScene {
     document.body.addEventListener('click', () => {
 
       const tl = gsap.timeline();
-      const duration = 4;
+      const duration = 1;
 
       if (document.body.classList.contains('loading')) {
         return;
@@ -91,6 +93,20 @@ class DefaultScene {
 
 
     });
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    this.scene.destination = { x: 0, y: 0 };
+
+    document.body.addEventListener('mousemove', e => {
+      let x = (e.clientX - w / 2) / (w / 2);
+      let y = (e.clientY - h / 2) / (h / 2);
+
+      this.scene.destination.x = x * 0.5;
+      this.scene.destination.y = y * 0.5;
+    });
+
   }
 
   // play() {
@@ -130,6 +146,12 @@ class DefaultScene {
 
   render() {
     this.controls.update();
+
+    this.material.uniforms.time.value = this.time;
+    this.time++;
+
+    this.scene.rotation.x += (this.scene.destination.x - this.scene.rotation.x) * 0.05;
+    this.scene.rotation.y += (this.scene.destination.y - this.scene.rotation.y) * 0.05;
 
     // this.renderer.resetState();
     this.renderer.render(this.scene, this.camera);
